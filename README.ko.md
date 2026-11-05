@@ -4,7 +4,7 @@
 
 [Playground](https://victor-choe.github.io/vlab-editor/) · [English](./README.md) · [API](./docs/api.md) · [Markdown](./docs/markdown.md) · [확장](./docs/extensions.md) · [기여 안내](./CONTRIBUTING.md)
 
-첫 npm 배포를 준비하고 있습니다. [공개 playground](https://victor-choe.github.io/vlab-editor/)에서 체험하거나 이 저장소를 받아 직접 실행할 수 있습니다.
+[공개 playground](https://victor-choe.github.io/vlab-editor/)에서 체험하거나 이 저장소를 받아 직접 실행할 수 있습니다.
 
 ## 주요 기능
 
@@ -33,7 +33,7 @@ pnpm dev
 
 ## React에서 사용하기
 
-첫 npm 배포 이후에는 React 19와 React DOM 19를 사용하는 프로젝트에 설치합니다.
+React 19와 React DOM 19를 사용하는 프로젝트에 설치합니다.
 
 ```sh
 npm install vlab-editor

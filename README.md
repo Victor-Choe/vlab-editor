@@ -4,7 +4,7 @@ A composable React block editor built on [ProseMirror](https://prosemirror.net/)
 
 [Playground](https://victor-choe.github.io/vlab-editor/) · [한국어](./README.ko.md) · [API](./docs/api.md) · [Markdown](./docs/markdown.md) · [Extensions](./docs/extensions.md) · [Contributing](./CONTRIBUTING.md)
 
-The first npm release is being prepared. Try the [live playground](https://victor-choe.github.io/vlab-editor/) or run it locally from this repository.
+Try the [live playground](https://victor-choe.github.io/vlab-editor/) or run it locally from this repository.
 
 ## Features
 
@@ -33,7 +33,7 @@ Open <http://localhost:3005>. The command builds the library, watches its source
 
 ## React usage
 
-Once the first npm release is published, install the package alongside React 19 and React DOM 19:
+Install the package in a project using React 19 and React DOM 19:
 
 ```sh
 npm install vlab-editor
