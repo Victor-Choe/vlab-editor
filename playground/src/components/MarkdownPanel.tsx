@@ -1,13 +1,13 @@
 import { useState } from "react"
 import { useEditorContext, useEditorState } from "vlab-editor"
+import { sampleImageUrl } from "../assets.js"
 
 const example =
   "# 마크다운 문서\n\n본문에 **굵게**와 *기울임*, `인라인 코드`를 넣어보세요.\n\n### 세 번째 제목\n\n- 첫 번째 항목\n- 두 번째 항목\n  - 중첩 목록\n\n3. 번호는 3부터 시작합니다.\n4. 다음 항목\n\n> 인용문 안에서도 **서식**을 쓸 수 있어요.\n\n---\n\n```ts\nconst greeting = '안녕'\nconsole.log(greeting)\n```\n\n###### 여섯 번째 제목"
 const tableExample = "# 표가 있는 문서\n\n| 이름 | 상태 |\n| --- | --- |\n| 예제 | 완료 |"
 const gfmExample =
   "## GFM과 외부 확장\n\n- [ ] 표 편집 버튼으로 행과 열을 바꿔보세요\n- [x] 완료한 항목은 체크 상태까지 저장돼요\n- [ ] **굵게**, ~~취소선~~도 함께 쓸 수 있어요\n\n| 기능 | 진행 | 담당 |\n| :--- | :---: | ---: |\n| 표 편집 | 완료 | ProseMirror |\n| 코드 색상 | 완료 | lowlight |\n| 블록 UI | 앱에서 변경 | NodeView |\n\n```ts\ninterface Greeting { message: string }\nconst greeting: Greeting = { message: '안녕, vlab-editor!' }\nconsole.log(greeting.message)\n```\n\n코드 블록 상단에서 언어를 바꿔보고, 편집 후 마크다운을 다시 가져와 보세요."
-const mediaExample =
-  '## 링크와 이미지\n\n[공식 문서](https://prosemirror.net/docs/ "ProseMirror")에서 편집 기능을 확인하세요.\n\n[**서식이 있는 링크**](/about)도 유지합니다.\n\n![에디터 이미지 예제](/editor-sample.svg "vlab-editor")'
+const mediaExample = `## 링크와 이미지\n\n[공식 문서](https://prosemirror.net/docs/ "ProseMirror")에서 편집 기능을 확인하세요.\n\n[**같은 페이지 링크**](#editor-demo)도 유지합니다.\n\n![에디터 이미지 예제](${sampleImageUrl} "vlab-editor")`
 function errorMessage(error: unknown): string {
   return error instanceof Error ? error.message : "마크다운 변환에 실패했습니다."
 }

@@ -2,9 +2,9 @@
 
 [ProseMirror](https://prosemirror.net/) 기반 React 블록 에디터입니다. Markdown을 가져오고 내보낼 수 있으며, 툴바의 버튼과 디자인을 앱에 맞게 조합할 수 있습니다.
 
-[English](./README.md) · [API](./docs/api.md) · [Markdown](./docs/markdown.md) · [확장](./docs/extensions.md) · [기여 안내](./CONTRIBUTING.md)
+[Playground](https://victor-choe.github.io/vlab-editor/) · [English](./README.md) · [API](./docs/api.md) · [Markdown](./docs/markdown.md) · [확장](./docs/extensions.md) · [기여 안내](./CONTRIBUTING.md)
 
-첫 npm 배포를 준비하고 있습니다. 현재는 이 저장소의 playground를 실행해 사용할 수 있습니다.
+첫 npm 배포를 준비하고 있습니다. [공개 playground](https://victor-choe.github.io/vlab-editor/)에서 체험하거나 이 저장소를 받아 직접 실행할 수 있습니다.
 
 ## 주요 기능
 

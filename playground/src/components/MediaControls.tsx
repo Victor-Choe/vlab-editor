@@ -16,6 +16,7 @@ import {
   useEditorContext,
   useEditorState,
 } from "vlab-editor"
+import { sampleImageUrl } from "../assets.js"
 import { ToolbarIcon } from "./ToolbarIcon"
 import "./MediaControls.css"
 export interface MediaNotice {
@@ -193,7 +194,7 @@ export function MediaControls({
                   placeholder={
                     kind === "link"
                       ? "https://example.com 또는 /about"
-                      : "https://example.com/image.png 또는 /editor-sample.svg"
+                      : `https://example.com/image.png 또는 ${sampleImageUrl}`
                   }
                   onChange={(event) => setAddress(event.target.value)}
                 />

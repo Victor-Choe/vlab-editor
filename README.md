@@ -2,9 +2,9 @@
 
 A composable React block editor built on [ProseMirror](https://prosemirror.net/), with Markdown import/export and toolbars you can style yourself.
 
-[한국어](./README.ko.md) · [API](./docs/api.md) · [Markdown](./docs/markdown.md) · [Extensions](./docs/extensions.md) · [Contributing](./CONTRIBUTING.md)
+[Playground](https://victor-choe.github.io/vlab-editor/) · [한국어](./README.ko.md) · [API](./docs/api.md) · [Markdown](./docs/markdown.md) · [Extensions](./docs/extensions.md) · [Contributing](./CONTRIBUTING.md)
 
-The first npm release is being prepared. You can run the playground from this repository today.
+The first npm release is being prepared. Try the [live playground](https://victor-choe.github.io/vlab-editor/) or run it locally from this repository.
 
 ## Features
 

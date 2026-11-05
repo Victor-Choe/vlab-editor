@@ -1,6 +1,6 @@
 # Releasing
 
-Publishing is a manual maintainer action. The CI workflow validates changes and does not publish packages.
+Publishing to npm is a manual maintainer action. The CI workflow validates changes and deploys the playground to GitHub Pages on `main`; it does not publish npm packages.
 
 ## Prepare a release
 

@@ -1,4 +1,5 @@
 import type { ImageUploadHandler } from "vlab-editor"
+import { sampleImageUrl } from "./assets.js"
 export function demoImageUpload(mode: "success" | "failure"): ImageUploadHandler {
   return async (file, { signal }) => {
     await new Promise<void>((resolve, reject) => {
@@ -17,6 +18,6 @@ export function demoImageUpload(mode: "success" | "failure"): ImageUploadHandler
       signal.addEventListener("abort", cancel, { once: true })
     })
     if (mode === "failure") throw new Error("업로드 실패 예제")
-    return { src: "/editor-sample.svg", alt: file.name }
+    return { src: sampleImageUrl, alt: file.name }
   }
 }
