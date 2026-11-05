@@ -1,0 +1,191 @@
+@layer vlab-editor {
+  .vlab-editor-content {
+    position: relative;
+  }
+
+  .vlab-editor-content > .ProseMirror {
+    position: relative;
+    word-wrap: break-word;
+    white-space: break-spaces;
+    font-variant-ligatures: none;
+  }
+
+  .vlab-editor-content > .ProseMirror::selection,
+  .vlab-editor-content > .ProseMirror ::selection {
+    background: var(
+      --vlab-editor-text-selection-background,
+      color-mix(in srgb, currentColor 16%, transparent)
+    );
+  }
+
+  .vlab-editor-content .ProseMirror-hideselection *::selection,
+  .vlab-editor-content
+    > .ProseMirror:has(.vlab-editor-block-selected, .ProseMirror-selectednode)
+    ::selection {
+    background: transparent;
+  }
+
+  .vlab-editor-content .ProseMirror-hideselection {
+    caret-color: transparent;
+  }
+
+  .vlab-editor-content .ProseMirror img {
+    max-width: 100%;
+    height: auto;
+  }
+
+  .vlab-editor-image-upload {
+    display: inline-block;
+    max-width: 100%;
+    padding: 2px 8px;
+    border: 1px dashed currentColor;
+    border-radius: 4px;
+    font-size: 0.85em;
+  }
+
+  .vlab-editor-content li[data-checked] {
+    display: flex;
+    align-items: baseline;
+    gap: 0.5em;
+
+    margin-inline-start: -1.5em;
+    list-style: none;
+  }
+
+  .vlab-editor-content [data-task-content] {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .vlab-editor-content li[data-checked] > input {
+    flex: none;
+    inline-size: 1em;
+    block-size: 1em;
+    margin: 0;
+    font-size: inherit;
+  }
+
+  .vlab-editor-content table {
+    table-layout: fixed;
+    border-collapse: collapse;
+    width: 100%;
+  }
+
+  .vlab-editor-content th,
+  .vlab-editor-content td {
+    position: relative;
+    vertical-align: top;
+    min-width: 1em;
+  }
+
+  .vlab-editor-content .selectedCell::after {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    pointer-events: none;
+    content: "";
+    background: color-mix(in srgb, currentColor 15%, transparent);
+  }
+
+  .vlab-editor-block-handle {
+    position: absolute;
+    z-index: 5;
+    display: grid;
+    place-items: center;
+    width: 24px;
+    height: 28px;
+    padding: 0;
+    border: 0;
+    border-radius: 6px;
+    background: var(--vlab-editor-drag-background, transparent);
+    color: var(--vlab-editor-drag-color, GrayText);
+    font-size: 22px;
+    line-height: 1;
+    cursor: grab;
+    user-select: none;
+    transition:
+      background-color 120ms ease,
+      color 120ms ease;
+  }
+
+  .vlab-editor-content :is(.ProseMirror-selectednode, .vlab-editor-block-selected) {
+    background-color: var(
+      --vlab-editor-block-selection-background,
+      color-mix(in srgb, currentColor 5%, transparent)
+    );
+    border-radius: 3px;
+    box-shadow: 0 0 0 var(--vlab-editor-block-selection-outset, 6px)
+      var(
+        --vlab-editor-block-selection-background,
+        color-mix(in srgb, currentColor 5%, transparent)
+      );
+    outline: 1px solid var(--vlab-editor-block-selection-color, transparent);
+    outline-offset: var(--vlab-editor-block-selection-outset, 6px);
+  }
+
+  .vlab-editor-content[data-block-selecting] {
+    cursor: crosshair;
+    user-select: none;
+  }
+
+  .vlab-editor-block-handle:hover,
+  .vlab-editor-block-handle:focus-visible,
+  .vlab-editor-block-handle[data-dragging="true"] {
+    background: var(
+      --vlab-editor-drag-hover-background,
+      color-mix(in srgb, currentColor 8%, transparent)
+    );
+    color: var(--vlab-editor-drag-hover-color, inherit);
+  }
+
+  .vlab-editor-block-handle:focus-visible {
+    outline: 2px solid currentColor;
+    outline-offset: 2px;
+  }
+
+  .vlab-editor-block-handle[data-dragging] {
+    cursor: grabbing;
+  }
+
+  .vlab-editor-block-drop-indicator {
+    position: absolute;
+    z-index: 4;
+    height: 2px;
+    border-radius: 2px;
+    background: var(--vlab-editor-drop-color, currentColor);
+    pointer-events: none;
+    transform: translateY(-50%);
+  }
+
+  .vlab-editor-block-drop-indicator::before {
+    position: absolute;
+    top: 50%;
+    inset-inline-start: -2px;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: inherit;
+    content: "";
+    transform: translateY(-50%);
+  }
+
+  .vlab-editor-block-handle[hidden],
+  .vlab-editor-block-drop-indicator[hidden] {
+    display: none;
+  }
+
+  .vlab-editor-block-announcement {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .vlab-editor-block-handle {
+      transition: none;
+    }
+  }
+}

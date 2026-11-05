@@ -1,0 +1,30 @@
+{
+  "name": "@vlab-editor/playground",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev:watch": "vite",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview --host 0.0.0.0 --port 3005 --strictPort"
+  },
+  "dependencies": {
+    "highlight.js": "11.12.0",
+    "lowlight": "3.3.0",
+    "react": "19.3.1",
+    "react-dom": "19.3.1",
+    "vlab-editor": "workspace:*",
+    "radix-ui": "1.8.1",
+    "clsx": "2.1.1",
+    "tailwind-merge": "3.7.0"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "4.3.3",
+    "@types/node": "24.19.2",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "tailwindcss": "4.3.3",
+    "typescript": "6.0.3",
+    "vite": "8.3.5"
+  }
+}

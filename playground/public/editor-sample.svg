@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="640" viewBox="0 0 1200 640">
+  <rect width="1200" height="640" rx="32" fill="#edf3ed"/>
+  <circle cx="1020" cy="110" r="180" fill="#d9e9dc"/>
+  <circle cx="100" cy="590" r="200" fill="#d9e9dc"/>
+  <rect x="330" y="90" width="540" height="460" rx="24" fill="#fff"/>
+  <rect x="380" y="145" width="220" height="24" rx="8" fill="#34765a"/>
+  <rect x="380" y="205" width="440" height="12" rx="6" fill="#d5e0d6"/>
+  <rect x="380" y="235" width="390" height="12" rx="6" fill="#d5e0d6"/>
+  <rect x="380" y="285" width="440" height="155" rx="12" fill="#eaf3ec"/>
+  <path d="M380 410 500 325l100 78 110-100 110 107v30H380Z" fill="#99bea3"/>
+  <circle cx="750" cy="322" r="20" fill="#34765a"/>
+  <text x="600" y="495" text-anchor="middle" fill="#34765a" font-family="system-ui,sans-serif" font-size="24" font-weight="600">vlab-editor · Image example</text>
+</svg>

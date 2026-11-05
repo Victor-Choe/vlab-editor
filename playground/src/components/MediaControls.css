@@ -1,0 +1,117 @@
+.media-dialog {
+  width: min(440px, calc(100vw - 32px));
+  max-height: calc(100dvh - 32px);
+  overflow: auto;
+  border: 1px solid #d6e1d6;
+  border-radius: 16px;
+  padding: 24px;
+  background: #fff;
+  color: #334d3f;
+  box-shadow: 0 24px 90px #16332230;
+}
+.media-dialog::backdrop {
+  background: #14271c55;
+}
+.media-dialog form {
+  display: grid;
+  gap: 16px;
+}
+.media-dialog-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.media-dialog-heading h2 {
+  margin: 0;
+  font-size: 18px;
+}
+.media-dialog label {
+  display: grid;
+  gap: 7px;
+  font-size: 12px;
+  font-weight: 600;
+}
+.media-dialog input,
+.media-dialog select {
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+  border: 1px solid #d4dfd4;
+  border-radius: 7px;
+  padding: 10px;
+  font: inherit;
+  color: inherit;
+  background: #fff;
+}
+.media-dialog input:focus-visible,
+.media-dialog select:focus-visible {
+  outline: 2px solid #34765a;
+  outline-offset: 2px;
+}
+.media-dialog button,
+.media-notice button,
+.image-upload-status button {
+  border: 1px solid #d4dfd4;
+  border-radius: 6px;
+  background: #f4f8f3;
+  color: #3c5846;
+  padding: 7px 10px;
+  cursor: pointer;
+  font: inherit;
+}
+.media-dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+.media-dialog .media-submit {
+  background: #34765a;
+  color: #fff;
+  border-color: #34765a;
+}
+.media-help {
+  margin: 0;
+  color: #778579;
+  font-size: 11px;
+  line-height: 1.7;
+}
+.media-error {
+  margin: 0;
+  font-size: 12px;
+  color: #9b4334;
+}
+.media-notice,
+.image-upload-status {
+  display: grid;
+  gap: 8px;
+  padding: 12px 22px;
+  background: #edf5ed;
+  font-size: 12px;
+  line-height: 1.7;
+}
+.media-notice,
+.image-upload-status > div {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+.media-notice > span,
+.image-upload-status span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.media-notice-error {
+  background: #fff0eb;
+  color: #9b4334;
+}
+.ProseMirror a {
+  color: var(--demo-accent, #34765a);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.ProseMirror img {
+  vertical-align: middle;
+  border-radius: 10px;
+}

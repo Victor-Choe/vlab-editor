@@ -1,0 +1,86 @@
+.demo-code-block {
+  margin: 1.25rem 0;
+  overflow: hidden;
+  border: 1px solid #d9e2db;
+  border-radius: 10px;
+  background: #f6f8f6;
+}
+
+.demo-code-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 8px 14px;
+  border-bottom: 1px solid #e1e7e2;
+  font: 600 11px / 1.5 monospace;
+  letter-spacing: 0.1em;
+  color: #65726a;
+}
+
+.demo-code-heading select {
+  max-width: 100%;
+  padding: 4px 8px;
+  border: 1px solid #d9e2db;
+  border-radius: 4px;
+  background: #fff;
+  color: #36493c;
+  font: 12px / 1.5 sans-serif;
+  letter-spacing: normal;
+}
+
+#editor .demo-code-block pre {
+  margin: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: #2b4032;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.demo-code-block .hljs-keyword,
+.demo-code-block .hljs-selector-tag,
+.demo-code-block .hljs-literal {
+  color: #a32959;
+}
+.demo-code-block .hljs-string,
+.demo-code-block .hljs-attr {
+  color: #246142;
+}
+.demo-code-block .hljs-number,
+.demo-code-block .hljs-built_in {
+  color: #7653ad;
+}
+.demo-code-block .hljs-title,
+.demo-code-block .hljs-property {
+  color: #245a91;
+}
+.demo-code-block .hljs-comment {
+  color: #768478;
+  font-style: italic;
+}
+
+#editor th,
+#editor td {
+  padding: 8px 12px;
+  border: 1px solid #ccd9d0;
+}
+
+#editor th {
+  background: #edf3ef;
+  font-weight: 600;
+}
+
+#editor td p,
+#editor th p {
+  margin: 0;
+}
+
+#editor li[data-checked] > input {
+  accent-color: var(--demo-accent);
+}
+
+#editor li[data-checked="true"] > [data-task-content] > p:first-child {
+  color: #7a857d;
+}

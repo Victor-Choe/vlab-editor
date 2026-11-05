@@ -1,0 +1,6 @@
+packages:
+  - playground
+
+allowBuilds:
+  '@tailwindcss/oxide': true
+  esbuild: true
