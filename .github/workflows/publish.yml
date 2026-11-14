@@ -1,0 +1,70 @@
+name: Publish to npm
+
+on:
+  push:
+    tags:
+      - "v[0-9]*"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: npm-publish
+  cancel-in-progress: false
+
+jobs:
+  build:
+    if: github.repository == 'Victor-Choe/vlab-editor'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Check release version
+        run: |
+          node <<'NODE'
+          const { name, version } = require("./package.json");
+          const tag = process.env.GITHUB_REF_NAME;
+          const stableTag = /^v(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)$/;
+          if (name !== "vlab-editor" || !stableTag.test(tag) || tag !== `v${version}`) {
+            throw new Error(`Expected vlab-editor@${version} with tag v${version}; received ${name} and ${tag}`);
+          }
+          NODE
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 11.3.0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm check
+      - name: Pack release
+        run: |
+          mkdir -p "$RUNNER_TEMP/npm-package"
+          npm pack --ignore-scripts --pack-destination "$RUNNER_TEMP/npm-package"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: npm-package
+          path: ${{ runner.temp }}/npm-package/*.tgz
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 7
+
+  publish:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: Install npm with trusted publishing support
+        run: npm install --global npm@11.19.1 --ignore-scripts --registry=https://registry.npmjs.org
+      - uses: actions/download-artifact@v4
+        with:
+          name: npm-package
+          path: ${{ runner.temp }}/npm-package
+      - name: Publish verified package
+        run: npm publish "$RUNNER_TEMP/npm-package/"*.tgz --access public --ignore-scripts --registry=https://registry.npmjs.org
