@@ -73,6 +73,35 @@ function noteExtension(): EditorExtension {
   }
 }
 describe("native ProseMirror extension adapters", () => {
+  it("runs export extensions and loss checks on every explicit Markdown read", () => {
+    let delimiter = "**"
+    const open = vi.fn(() => delimiter)
+    const onChange = vi.fn()
+    const editor = new Editor({
+      markdown: "**본문**",
+      onChange,
+      extensions: [
+        {
+          name: "custom-strong-delimiter",
+          markdown: { marks: { strong: { open, close: () => delimiter } } },
+        },
+      ],
+    })
+    editor.dispatch(editor.state.tr.insertText("!", editor.state.doc.content.size - 1))
+    expect(onChange).toHaveBeenCalledExactlyOnceWith(editor.state)
+    expect(open).not.toHaveBeenCalled()
+    const snapshot = editor.getSnapshot()
+    expect(editor.getMarkdown()).toBe("**본문!**")
+    delimiter = "__"
+    expect(editor.getMarkdown()).toBe("__본문!__")
+    delimiter = "~~"
+    expect(() => editor.getMarkdown()).toThrow(MarkdownConversionError)
+    delimiter = "**"
+    expect(editor.getMarkdown()).toBe("**본문!**")
+    expect(open).toHaveBeenCalledTimes(4)
+    expect(onChange).toHaveBeenCalledOnce()
+    expect(editor.getSnapshot()).toBe(snapshot)
+  })
   it("registers a block, Markdown rules and NodeView without changing the library", () => {
     const editor = new Editor({ extensions: [noteExtension()], markdown: "```note\n알림\n```" })
     const result = render(

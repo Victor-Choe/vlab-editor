@@ -465,9 +465,11 @@ export function createMarkdownCodec(
     if (issues.length) throw new MarkdownConversionError("serialize", issues)
     let markdown: string
     let restored: Node
+    let normalized: Node
     try {
       doc.check()
-      markdown = serializer.serialize(withoutEmptyParagraphs(doc), { tightLists: true })
+      normalized = withoutEmptyParagraphs(doc)
+      markdown = serializer.serialize(normalized, { tightLists: true })
       restored = parse(markdown)
     } catch (cause) {
       throw new MarkdownConversionError(
@@ -481,7 +483,7 @@ export function createMarkdownCodec(
         { cause },
       )
     }
-    if (!withoutEmptyParagraphs(doc).eq(withoutEmptyParagraphs(restored))) {
+    if (!normalized.eq(withoutEmptyParagraphs(restored))) {
       throw new MarkdownConversionError("serialize", [
         {
           feature: "roundtrip",
