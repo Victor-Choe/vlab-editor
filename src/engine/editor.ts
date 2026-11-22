@@ -171,6 +171,8 @@ export class Editor {
   #callbacks: EditorCallbacks & ImageUploadOptions
   #markdownBehavior: MarkdownBehaviorOptions
   #configuration: EditorConfiguration
+  #cacheMarkdown: boolean
+  #cachedMarkdown: string | undefined
   #listeners = new Set<() => void>()
   #imageUploads = new Map<string, AbortController>()
   #nextImageUpload = 0
@@ -179,6 +181,9 @@ export class Editor {
     this.#callbacks = options
     this.#editable = options.editable !== false
     this.#configuration = configure(options.extensions)
+    this.#cacheMarkdown = !this.#configuration.extensions.some(
+      (extension) => extension.markdown || extension.nodes || extension.marks,
+    )
     this.#markdownBehavior = {
       markdownShortcuts: options.markdownShortcuts !== false,
       markdownPaste: options.markdownPaste !== false,
@@ -229,7 +234,10 @@ export class Editor {
     this.#updateState(state)
   }
   getMarkdown(): string {
-    return this.#configuration.codec.serialize(this.state.doc)
+    if (this.#cachedMarkdown !== undefined) return this.#cachedMarkdown
+    const markdown = this.#configuration.codec.serialize(this.state.doc)
+    if (this.#cacheMarkdown) this.#cachedMarkdown = markdown
+    return markdown
   }
   replaceMarkdown(markdown: string): void {
     const doc = this.#configuration.codec.parse(markdown)
@@ -428,6 +436,7 @@ export class Editor {
   #updateState(state: EditorState): void {
     const previous = this.state
     const view = this.view
+    if (previous.doc !== state.doc) this.#cachedMarkdown = undefined
     this.#snapshot = { state, view }
     view?.updateState(state)
     for (const listener of this.#listeners) listener()

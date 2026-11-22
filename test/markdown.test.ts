@@ -1,4 +1,5 @@
 import { schema as commonMarkSchema } from "prosemirror-markdown"
+import { TextSelection } from "prosemirror-state"
 import { describe, expect, it, vi } from "vitest"
 import {
   Editor,
@@ -123,6 +124,21 @@ describe("Markdown conversions", () => {
   })
 })
 describe("Editor Markdown API", () => {
+  it("reuses a validated Markdown export until the document changes", () => {
+    const editor = new Editor({ markdown: "**본문**" })
+    const doc = editor.state.doc
+    const check = vi.spyOn(doc, "check")
+
+    expect(editor.getMarkdown()).toBe("**본문**")
+    editor.dispatch(editor.state.tr.setSelection(TextSelection.create(doc, 2)))
+    expect(editor.getMarkdown()).toBe("**본문**")
+    expect(check).toHaveBeenCalledOnce()
+
+    editor.dispatch(editor.state.tr.insertText("!"))
+    const checkUpdated = vi.spyOn(editor.state.doc, "check")
+    expect(editor.getMarkdown()).toBe("**본!문**")
+    expect(checkUpdated).toHaveBeenCalledOnce()
+  })
   it("applies source changes as a separate undo event without dropping earlier history", () => {
     const editor = new Editor({ markdown: "이전" })
     editor.dispatch(editor.state.tr.insertText("!", editor.state.doc.content.size - 1))

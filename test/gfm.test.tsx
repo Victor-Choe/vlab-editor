@@ -3,7 +3,7 @@ import { DOMParser, DOMSerializer } from "prosemirror-model"
 import { AllSelection, TextSelection } from "prosemirror-state"
 import { CellSelection, TableMap } from "prosemirror-tables"
 import type { EditorView } from "prosemirror-view"
-import { afterEach, beforeAll, describe, expect, it } from "vitest"
+import { afterEach, beforeAll, describe, expect, it, vi } from "vitest"
 import {
   Editor,
   EditorContent,
@@ -235,6 +235,26 @@ describe("upstream table editing", () => {
     select(editor, "A")
     editor.execute("deleteRow")
     expect(editor.getMarkdown()).toBe("| 1 | 2 |\n| --- | --- |")
+  })
+  it("reuses a checked table across unrelated edits and normalizes it again after a table edit", () => {
+    const editor = new Editor({ markdown: `본문\n\n${source}` })
+    const table = editor.state.doc.lastChild
+    const header = table?.firstChild
+    if (!table || !header) throw new Error("Missing table header")
+    const measureHeader = vi.spyOn(header, "forEach")
+
+    editor.dispatch(editor.state.tr.insertText("첫 ", 1))
+    expect(measureHeader).toHaveBeenCalled()
+    measureHeader.mockClear()
+    editor.dispatch(editor.state.tr.insertText("다음 ", 1))
+    expect(editor.state.doc.lastChild).toBe(table)
+    expect(measureHeader).not.toHaveBeenCalled()
+
+    const firstCell = editor.state.doc.content.size - table.nodeSize + 2
+    const bodyCell = editor.state.schema.nodes.table_cell
+    if (!bodyCell) throw new Error("Missing table cell type")
+    editor.dispatch(editor.state.tr.setNodeMarkup(firstCell, bodyCell))
+    expect(editor.state.doc.nodeAt(firstCell)?.type.name).toBe("table_header")
   })
   it("aligns whole columns from a rectangular cell selection", () => {
     const editor = new Editor({ markdown: source })

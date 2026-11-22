@@ -114,23 +114,25 @@ export function setTableAlignment(align: "left" | "center" | "right" | null): Co
   }
 }
 export function gfmTablePlugin(): Plugin {
+  const normalizedTables = new WeakSet<Node>()
   return new Plugin({
     appendTransaction(transactions, _previous, state) {
       if (!transactions.some((tr) => tr.docChanged)) return null
+      const { table: tableType, table_header, table_cell } = editorTypes(state.schema).nodes
       const tr = state.tr
       state.doc.descendants((table, pos) => {
-        if (table.type !== editorTypes(state.schema).nodes.table) return
+        if (table.type !== tableType) return
+        if (normalizedTables.has(table)) return false
+        const stepCount = tr.steps.length
         table.forEach((row, rowOffset, rowIndex) => {
           row.forEach((cell, cellOffset, column) => {
-            const type =
-              rowIndex === 0
-                ? editorTypes(state.schema).nodes.table_header
-                : editorTypes(state.schema).nodes.table_cell
+            const type = rowIndex === 0 ? table_header : table_cell
             const align = table.firstChild?.maybeChild(column)?.attrs.align ?? null
             if (cell.type !== type || cell.attrs.align !== align)
               tr.setNodeMarkup(pos + 2 + rowOffset + cellOffset, type, { ...cell.attrs, align })
           })
         })
+        if (tr.steps.length === stepCount) normalizedTables.add(table)
         return false
       })
       return tr.docChanged ? tr : null

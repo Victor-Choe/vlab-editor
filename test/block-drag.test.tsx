@@ -170,6 +170,23 @@ describe("top-level block movement", () => {
   })
 })
 describe("block drag extension", () => {
+  it("locates hovered and selected text blocks without measuring unrelated blocks", () => {
+    const { editor, view, handle } = setup("**첫째**\n\n둘째\n\n셋째")
+    const [first, second, third] = blocks(editor.state.doc)
+    if (!first || !second || !third) throw new Error("Missing blocks")
+    const firstText = (view.nodeDOM(first.from) as HTMLElement).querySelector("strong")
+    if (!firstText) throw new Error("Missing inline content")
+    const measureThird = vi.spyOn(view.nodeDOM(third.from) as HTMLElement, "getBoundingClientRect")
+
+    hover(firstText, 0)
+    expect(handle.hidden).toBe(false)
+    expect(handle.dataset.blockPosition).toBe(String(first.from))
+    editor.dispatch(
+      editor.state.tr.setSelection(TextSelection.create(editor.state.doc, second.from + 1)),
+    )
+    expect(handle.dataset.blockPosition).toBe(String(second.from))
+    expect(measureThird).not.toHaveBeenCalled()
+  })
   it("shows a handle on hover, previews a top-level gap and moves the complete block", () => {
     const { editor, host, handle } = setup()
     expect(handle.hidden).toBe(true)

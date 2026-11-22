@@ -162,33 +162,53 @@ class BlockDragView implements PluginView {
     this.ownerDocument.defaultView?.addEventListener("resize", this.schedulePosition)
     controllers.set(view, this)
   }
+  private measureBlock(
+    node: ProseMirrorNode,
+    from: number,
+    parent: ProseMirrorNode,
+    index: number,
+  ): Block | undefined {
+    const eligible =
+      parent.type === this.view.state.schema.topNodeType ||
+      isList(parent) ||
+      (isListItem(parent) && !(index === 0 && node.type.name === "paragraph"))
+    if (!eligible) return
+    const element = this.view.nodeDOM(from)
+    if (element?.nodeType !== 1) return
+    const dom = element as HTMLElement
+    const rect = dom.getBoundingClientRect()
+    const paragraph = isListItem(node) ? this.view.nodeDOM(from + 1) : null
+    const line =
+      paragraph?.nodeType === 1 ? (paragraph as HTMLElement).getBoundingClientRect() : null
+    return {
+      node,
+      from,
+      index,
+      parent,
+      depth: this.view.state.doc.resolve(from).depth,
+      element: dom,
+      rect,
+      hitRect: line?.height && line.width ? line : rect,
+    }
+  }
+  private blockAtPosition(from: number | null): Block | undefined {
+    const { doc } = this.view.state
+    if (from === null || from < 0 || from >= doc.content.size) return
+    const $from = doc.resolve(from)
+    if ($from.textOffset) return
+    for (let depth = 1; depth <= $from.depth; depth++) {
+      const ancestor = $from.node(depth)
+      if (!isList(ancestor) && !isListItem(ancestor)) return
+    }
+    const node = $from.nodeAfter
+    if (node) return this.measureBlock(node, from, $from.parent, $from.index())
+  }
   private blocks(): Block[] {
     const blocks: Block[] = []
     this.view.state.doc.descendants((node, from, parent, index) => {
       if (!parent) return false
-      const element = this.view.nodeDOM(from)
-      const eligible =
-        parent.type === this.view.state.schema.topNodeType ||
-        isList(parent) ||
-        (isListItem(parent) && !(index === 0 && node.type.name === "paragraph"))
-      if (eligible && element?.nodeType === 1) {
-        const dom = element as HTMLElement
-        const rect = dom.getBoundingClientRect()
-        const paragraph = isListItem(node)
-          ? (this.view.nodeDOM(from + 1) as HTMLElement | null)
-          : null
-        const line = paragraph?.getBoundingClientRect()
-        blocks.push({
-          node,
-          from,
-          index,
-          parent,
-          depth: this.view.state.doc.resolve(from).depth,
-          element: dom,
-          rect,
-          hitRect: line?.height && line.width ? line : rect,
-        })
-      }
+      const block = this.measureBlock(node, from, parent, index)
+      if (block) blocks.push(block)
       return isList(node) || isListItem(node)
     })
     return blocks
@@ -441,14 +461,27 @@ class BlockDragView implements PluginView {
   }
   private selectedBlock(): Block | undefined {
     const { selection } = this.view.state
-    const from = blockRange(selection)?.from ?? blockPosition(selection.$from)
+    const { $from } = selection
     return (
-      this.blocks().find((block) => block.from === from) ??
-      this.blocks().find(
-        (block) =>
-          block.from === (selection.$from.depth ? selection.$from.before(1) : selection.from),
-      )
+      this.blockAtPosition(blockRange(selection)?.from ?? blockPosition($from)) ??
+      this.blockAtPosition($from.depth ? $from.before(1) : selection.from)
     )
+  }
+  private textBlockUnderPointer(event: PointerEvent): Block | undefined {
+    const { dom, state } = this.view
+    let target = event.target as globalThis.Node | null
+    while (target && target !== dom && target.parentNode !== dom) target = target.parentNode
+    if (target?.parentNode !== dom) return
+    const $inside = state.doc.resolve(this.view.posAtDOM(target, 0))
+    if ($inside.depth !== 1 || !$inside.parent.isTextblock) return
+    const block = this.blockAtPosition($inside.before())
+    if (
+      block?.element === target &&
+      block.rect.width > 0 &&
+      event.clientY > block.rect.top &&
+      event.clientY < block.rect.bottom
+    )
+      return block
   }
   private pointerMove = (event: PointerEvent) => {
     if (
@@ -460,7 +493,7 @@ class BlockDragView implements PluginView {
       return
     const rect = this.view.dom.getBoundingClientRect()
     if (event.clientX < rect.left || event.clientX > rect.right) return
-    this.showHandle(this.blockAtY(event.clientY))
+    this.showHandle(this.textBlockUnderPointer(event) ?? this.blockAtY(event.clientY))
   }
   private pointerLeave = () => {
     if (!this.active && this.ownerDocument.activeElement !== this.handle) {
@@ -484,7 +517,7 @@ class BlockDragView implements PluginView {
     this.announceSelection()
   }
   private dragStart = (event: DragEvent) => {
-    const block = this.blocks().find((item) => item.from === this.hovered)
+    const block = this.blockAtPosition(this.hovered)
     if (!block || !this.canDrag(block) || !event.dataTransfer) {
       event.preventDefault()
       return
@@ -541,7 +574,7 @@ class BlockDragView implements PluginView {
       const parentPosition: number | null = block.depth
         ? this.view.state.doc.resolve(block.from).before()
         : null
-      block = this.blocks().find((item) => item.from === parentPosition)
+      block = this.blockAtPosition(parentPosition)
     }
     return null
   }
@@ -613,7 +646,7 @@ class BlockDragView implements PluginView {
       if (range) this.enterBlock(range.head)
       else {
         const position = blockPosition(this.view.state.selection.$head)
-        const block = this.blocks().find((item) => item.from === position) ?? this.selectedBlock()
+        const block = this.blockAtPosition(position) ?? this.selectedBlock()
         if (!block || !this.canSelect(block)) return false
         this.choose(block.from, block.from, true)
         this.view.focus()
@@ -640,7 +673,7 @@ class BlockDragView implements PluginView {
     }
     if (event.key !== "ArrowUp" && event.key !== "ArrowDown") return false
     const position = onHandle ? this.hovered : blockPosition(this.view.state.selection.$from)
-    const sourceBlock = this.blocks().find((block) => block.from === (range?.from ?? position))
+    const sourceBlock = this.blockAtPosition(range?.from ?? position)
     if (!sourceBlock) return false
     const blocks = this.blocks().filter((block) => block.parent === sourceBlock.parent)
     const direction = event.key === "ArrowUp" ? -1 : 1
@@ -733,8 +766,7 @@ class BlockDragView implements PluginView {
         const block = this.blockAtY(this.margin.y)
         if (block) this.choose(this.margin.anchor, block.from)
       }
-      if (this.hovered !== null)
-        this.showHandle(this.blocks().find((block) => block.from === this.hovered))
+      if (this.hovered !== null) this.showHandle(this.blockAtPosition(this.hovered))
     })
   }
   update(view: EditorView, previous: EditorState) {
